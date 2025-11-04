@@ -1,23 +1,112 @@
-@import "tailwindcss"; /* ✅ v4 all-in-one import */
+@import "tailwindcss";
 
-/* Optional theme tokens */
 @theme inline {
   --color-base: #0a0b10;
   --color-ink: #eaeaf0;
   --color-ink-dim: #cfd3de;
+  --color-ink-contrast: #222222;
   --color-accent: #5de4c7;
+  --color-accent-2: #7a9cff;
+
+  --radius: 9999px;       
+  --elev-soft: 0 0 28px rgba(93,228,199,.35);
+  --elev-card: 0 8px 30px rgba(0,0,0,.35);
+
   --font-sans: Inter, ui-sans-serif, system-ui, sans-serif;
 }
 
-:root { color-scheme: dark; }
-
-html, body {
-  background:
-    radial-gradient(1200px 600px at 10% -10%, color-mix(in oklab, var(--color-accent) 25%, transparent), transparent 40%),
-    radial-gradient(900px 500px at 90% 10%, color-mix(in oklab, #7a9cff 18%, transparent), transparent 40%),
-    var(--color-base);
+:root {
+  color-scheme: dark;
+  /* 👇 background now driven by --bg, with a safe default */
+  --bg: radial-gradient(1200px 600px at 10% -10%, color-mix(in oklab, var(--color-accent) 25%, transparent), transparent 40%),
+        radial-gradient(900px 500px at 90% 10%, color-mix(in oklab, var(--color-accent-2) 18%, transparent), transparent 40%),
+        var(--color-base);
+  background: var(--bg);
   color: var(--color-ink);
   font-family: var(--font-sans);
-  margin: 0;
-  padding: 0;
+  --side-a: var(--color-accent);    
+  --side-b: var(--color-accent-2);  
+}
+
+[data-theme='light'] {
+  color-scheme: light;
+  --color-ink: #111111;      /* body text */
+  --color-ink-dim: #2b2b2b;  /* “dim” text stays readable on white */
+}
+
+/* keep explicit dark mode too (optional) */
+[data-theme='dark'] {
+  color-scheme: dark;
+}
+
+.text-ink { color: var(--color-ink) !important; }
+.text-ink-dim { color: var(--color-ink-dim) !important; }
+
+/* When the theme is light, make sure these are dark enough */
+[data-theme='light'] .text-ink { color: #111111 !important; }
+[data-theme='light'] .text-ink-dim { color: #2b2b2b !important; }
+
+
+/* ===== Side art base ===== */
+.side-art { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+
+.side-art__ribbon {
+  position: absolute; top: 0; bottom: 0;
+  width: clamp(140px, 12vw, 220px);
+  filter: saturate(1.05);
+  opacity: .55;
+  transform: translateZ(0);
+}
+
+/* --- ALIGNMENT VARIANTS ------------------------------------- */
+/* Flush to the screen edge */
+.side-art--edge .side-art__ribbon--left  { left: 0; }
+.side-art--edge .side-art__ribbon--right { right: 0; }
+
+/* Hug the centered content column (old behavior) */
+.side-art--content .side-art__ribbon--left  { left:  max(0px, (100vw - 1200px) / 2 - 120px); }
+.side-art--content .side-art__ribbon--right { right: max(0px, (100vw - 1200px) / 2 - 120px); }
+
+/* Ribbon paints (left/right are slightly different masks/origins) */
+.side-art__ribbon--left {
+  background:
+    radial-gradient(70% 35% at 30% 15%, color-mix(in oklab, var(--color-accent) 55%, transparent), transparent 60%),
+    radial-gradient(60% 35% at 50% 45%, color-mix(in oklab, var(--color-accent-2) 45%, transparent), transparent 60%),
+    linear-gradient(180deg,
+      color-mix(in oklab, var(--color-accent) 18%, transparent) 0%,
+      color-mix(in oklab, var(--color-accent-2) 18%, transparent) 35%,
+      transparent 100%);
+  /* fade into page */
+  mask-image: linear-gradient(to right, black 80%, transparent 100%);
+}
+
+.side-art__ribbon--right {
+  background:
+    radial-gradient(70% 35% at 70% 15%, color-mix(in oklab, var(--color-accent) 55%, transparent), transparent 60%),
+    radial-gradient(60% 35% at 50% 45%, color-mix(in oklab, var(--color-accent-2) 45%, transparent), transparent 60%),
+    linear-gradient(180deg,
+      color-mix(in oklab, var(--color-accent-2) 18%, transparent) 0%,
+      color-mix(in oklab, var(--color-accent) 18%, transparent) 35%,
+      transparent 100%);
+  mask-image: linear-gradient(to left, black 80%, transparent 100%);
+}
+
+/* Glows (left & right) */
+.side-art__glow { position: absolute; width: 30vw; max-width: 440px; aspect-ratio: 1.6/1;
+  filter: blur(22px); opacity: .35;
+  background:
+    radial-gradient(60% 60% at 50% 45%, color-mix(in oklab, var(--color-accent) 28%, transparent), transparent 60%),
+    radial-gradient(90% 70% at 65% 55%, color-mix(in oklab, var(--color-accent-2) 22%, transparent), transparent 60%);
+  mask-image: radial-gradient(60% 55% at 50% 50%, black 50%, transparent 100%);
+}
+.side-art__glow--left  { top: 18vh; left:  clamp(8px, 4vw, 120px); }
+.side-art__glow--right { top: 18vh; right: clamp(8px, 4vw, 120px); }
+
+/* Subtle grid only in light mode */
+.side-art__grid { position: absolute; inset: 0; opacity: .07; background-size: 0 0; }
+[data-theme='light'] .side-art__grid {
+  background-image:
+    linear-gradient(to bottom, color-mix(in oklab, var(--color-base) 80%, transparent) 1px, transparent 1px),
+    linear-gradient(to right,  color-mix(in oklab, var(--color-base) 80%, transparent) 1px, transparent 1px);
+  background-size: 28px 28px;
 }

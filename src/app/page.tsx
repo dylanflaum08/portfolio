@@ -92,34 +92,37 @@ export default function Page() {
           behavior === 'scroll' && layout === 'leftRail' ? 'centered' : layout
 
   // Content
-  const about =
-    "I’m a full-stack engineer focused on React/Next.js, TypeScript, and AWS. I love crafting animated interfaces and smooth UX using Framer Motion and Lenis, and I deploy production services with serverless architectures."
+const about =
+  "Hi my name is Dylan Flaum. I graduated from the University of Florida with a major in Computer Science, a minor in Sales Engineering, and UF's Artificial Intelligence Certification." +
+  "I currently work as a Full Stack Developer at a startup called Spark Rewards, where my day-to-day can vary from translating Figma designs into responsive front-end pages, to configuring APIs on the backend, to managing our AWS infrastructure.\n\n" +
+  "I’m passionate about exploring emerging technologies, especially in artificial intelligence and automation, and I really enjoy applying those tools to build efficient, user-focused systems." +
+  "I’m excited to bring that same curiosity and problem-solving mindset to a larger engineering team where I can continue to grow and make an impact.";
+
 
   const projects = useMemo(
-    () => [
-      {
-        title: 'Spark Rewards',
-        blurb: 'Rewards platform for small businesses – web/mobile UI and AWS serverless backend.',
-        tags: ['Next.js', 'Tailwind', 'AWS', 'DynamoDB'],
-      },
-      {
-        title: 'BusyPing',
-        blurb: 'Mobile app that auto-responds while driving or in the office with customizable toggles.',
-        tags: ['React Native', 'Amplify', 'Cognito'],
-      },
-      {
-        title: 'Slothful Trading',
-        blurb: 'Experimental trading toolkit with dashboards and automation playground.',
-        tags: ['TypeScript', 'WebSockets', 'Alpaca'],
-      },
-      {
-        title: 'Movie Predictor',
-        blurb: 'ML model that predicts movie ratings; end-to-end data pipeline & inference UI.',
-        tags: ['Python', 'scikit-learn', 'FastAPI'],
-      },
-    ],
-    []
-  )
+  () => [
+    {
+      title: 'Spark Rewards',
+      blurb: 'Rewards platform for small businesses – web/mobile UI and AWS serverless backend.',
+      tags: ['Next.js', 'Tailwind', 'AWS', 'DynamoDB'],
+      href: 'https://getsparkrewards.com',
+    },
+    {
+      title: 'Slothful Trading',
+      blurb: 'Experimental trading toolkit with dashboards and automation playground.',
+      tags: ['TypeScript', 'WebSockets', 'Alpaca'],
+      href: 'https://github.com/dylanflaum08',
+    },
+    {
+      title: 'Movie Predictor',
+      blurb: 'ML model that predicts movie ratings; end-to-end data pipeline & inference UI.',
+      tags: ['Python', 'scikit-learn', 'FastAPI'],
+      href: 'https://github.com/dylanflaum08',
+    },
+  ],
+  []
+)
+
 
   const experience = useMemo(
     () => [
@@ -171,12 +174,13 @@ export default function Page() {
       {/* Smooth scrolling only in scroll mode */}
       {behavior === 'scroll' && <LenisProvider active />}
 
-      {/* Nav (includes “Remix” tab) */}
-      <Nav
-        mode={behavior === 'tabbed' ? 'tabbed' : 'scroll'}
-        onNavigate={(id) => setActiveId(id as TabId)}
-        activeId={behavior === 'tabbed' ? activeId : undefined}
-      />
+      {behavior === 'tabbed' && (
+        <Nav
+          mode="tabbed"
+          onNavigate={(id) => setActiveId(id as TabId)}
+          activeId={activeId}
+        />
+      )}
 
       {behavior === 'tabbed' && <SideDecor position={sidePos} align="edge"/>}
 

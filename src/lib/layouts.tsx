@@ -7,9 +7,10 @@ export type LayoutId = 'centered' | 'splitHero' | 'leftRail'
 
 type Content = {
   about: string
-  projects: Array<{ title: string; blurb: string; tags: string[] }>
+  projects: Array<{ title: string; blurb: string; tags: string[]; href?: string }>
   experience: Array<{ role: string; org: string; when: string; bullets: string[] }>
 }
+
 
 export function CenteredLayout({ content }: { content: Content }) {
   return (
@@ -17,15 +18,23 @@ export function CenteredLayout({ content }: { content: Content }) {
       {/* ABOUT */}
       <Section id="about">
         <h2 className="text-4xl md:text-5xl font-bold mb-6">About</h2>
-        <p className="text-ink max-w-[860px] md:text-lg leading-relaxed">{content.about}</p>
+        <p className="whitespace-pre-line text-ink max-w-[860px] md:text-lg leading-relaxed">
+          {content.about}
+        </p>
       </Section>
 
       {/* PROJECTS */}
       <Section id="projects">
         <h2 className="text-4xl md:text-5xl font-bold mb-8">Projects</h2>
         <div className="grid md:grid-cols-2 gap-6">
-          {content.projects.map(p => (
-            <ProjectCard key={p.title} title={p.title} blurb={p.blurb} tags={p.tags} />
+          {content.projects.map((p) => (
+            <ProjectCard
+              key={p.title}
+              title={p.title}
+              blurb={p.blurb}
+              tags={p.tags}
+              href={p.href}          
+            />
           ))}
         </div>
       </Section>
@@ -59,7 +68,7 @@ export function SplitHeroLayout({ content }: { content: Content }) {
         <div className="grid md:grid-cols-2 gap-8 items-center">
           <div>
             <h2 className="text-4xl md:text-5xl font-bold">About</h2>
-            <p className="mt-4 text-ink md:text-lg leading-relaxed">{content.about}</p>
+            <p className="whitespace-pre-line mt-4 text-ink md:text-lg leading-relaxed">{content.about}</p>
           </div>
           <div className="rounded-2xl border border-white/10 bg-white/5 p-6 shadow-[var(--elev-card)]">
             <h3 className="text-xl font-semibold mb-2">Highlights</h3>
@@ -79,7 +88,7 @@ export function SplitHeroLayout({ content }: { content: Content }) {
         <div className="columns-1 md:columns-2 gap-6 [column-fill:balance]">
           {content.projects.map(p => (
             <div key={p.title} className="break-inside-avoid mb-6">
-              <ProjectCard title={p.title} blurb={p.blurb} tags={p.tags} />
+              <ProjectCard title={p.title} blurb={p.blurb} tags={p.tags} href={p.href}/>
             </div>
           ))}
         </div>
@@ -120,13 +129,13 @@ export function LeftRailLayout({ content }: { content: Content }) {
       <div>
         <Section id="about">
           <h2 className="text-4xl md:text-5xl font-bold mb-6">About</h2>
-          <p className="text-ink max-w-[860px] md:text-lg leading-relaxed">{content.about}</p>
+          <p className="whitespace-pre-line text-ink max-w-[860px] md:text-lg leading-relaxed">{content.about}</p>
         </Section>
         <Section id="projects">
           <h2 className="text-4xl md:text-5xl font-bold mb-8">Projects</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {content.projects.map(p => (
-              <ProjectCard key={p.title} title={p.title} blurb={p.blurb} tags={p.tags} />
+              <ProjectCard key={p.title} title={p.title} blurb={p.blurb} tags={p.tags} href={p.href}/>
             ))}
           </div>
         </Section>

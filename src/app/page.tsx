@@ -8,6 +8,7 @@ import RemixThemeButton from '@/components/RemixThemeButton'
 import { renderLayout, type LayoutId } from '@/lib/layouts'
 import LenisProvider from '@/components/LenisProvider'
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import ContinuousArt from '@/components/ContinuousArt'
 import SideDecor from '@/components/SideDecor'
 
 type Pos = 'left'|'right'|'both'
@@ -23,24 +24,55 @@ export default function Page() {
   const [behavior, setBehavior] = useState<BehaviorId>('scroll')
   const [activeId, setActiveId] = useState<TabId>('remix')
   const [sidePos, setSidePos] = useState<Pos>(pickPos())
+  const [designVariant, setDesignVariant] = useState<number | null>(null);
 
   const [remixDesc, setRemixDesc] = useState<string>('')
 
+
+
   const computeRemixDesc = useCallback(() => {
-    if (typeof window === 'undefined') return
-    const root = document.documentElement
-    const mode = (root.dataset.mode as 'dark'|'light'|undefined) ?? 'dark'
-    const cs = getComputedStyle(root)
-    const accent = cs.getPropertyValue('--color-accent')?.trim() || '#5de4c7'
+    if (typeof window === 'undefined') return;
+
+    const root = document.documentElement;
+    const mode = (root.dataset.mode as 'dark' | 'light' | undefined) ?? 'dark';
+    const cs = getComputedStyle(root);
+    const accent = cs.getPropertyValue('--color-accent')?.trim() || '#5de4c7';
+    const accent2 = cs.getPropertyValue('--color-accent-2')?.trim() || '#7a9cff';
 
     const layoutLabel =
-      layout === 'centered' ? 'Centered'
-      : layout === 'splitHero' ? 'Split Hero'
-      : 'Left Rail'
+      layout === 'centered' ? 'a centered layout'
+      : layout === 'splitHero' ? 'a split hero layout'
+      : 'a left rail layout';
 
-    const behaviorLabel = behavior === 'scroll' ? 'Continuous scroll' : 'Tabbed'
-    setRemixDesc(`Remix: ${behaviorLabel} · Layout: ${layoutLabel} · Theme: ${mode} · Accent: ${accent}`)
-  }, [layout, behavior])
+    const behaviorLabel =
+      behavior === 'scroll' ? 'continuous scroll mode' : 'tabbed navigation mode';
+
+    // Only describe side art when it's actually visible: scroll + light + variant present
+    let sideLine = '';
+    if (behavior === 'scroll' && mode === 'light' && designVariant != null) {
+      const variantLabel =
+        designVariant === 0 ? 'clean bordered edges'
+        : designVariant === 1 ? 'wave-like side accents'
+        : designVariant === 2 ? 'subtle fade panels'
+        : designVariant === 3 ? 'tech grid lines'
+        : 'glowing trails';
+      sideLine = ` The current side design features ${variantLabel}.`;
+    }
+
+    const transitionLine =
+      behavior === 'scroll'
+        ? ' with a visible fade transition between sections.'
+        : ' with discrete, click-to-view sections.';
+
+    const sentence =
+      `This remix is in ${behaviorLabel} using ${layoutLabel}${transitionLine} `
+      + `The theme is ${mode}.${sideLine} `
+      + `Main accents: ${accent} and ${accent2}.`;
+
+    setRemixDesc(sentence);
+  }, [layout, behavior, designVariant]);
+
+
 
   useEffect(() => { computeRemixDesc() }, [computeRemixDesc])
   useEffect(() => {
@@ -62,31 +94,20 @@ export default function Page() {
   }, [])
 
   useEffect(() => {
+    const handler = (e: Event) => {
+      const ce = e as CustomEvent<number | null>;
+      setDesignVariant(ce.detail ?? null);
+    };
+    window.addEventListener('design:variant', handler as EventListener);
+    return () => window.removeEventListener('design:variant', handler as EventListener);
+  }, []);
+
+  useEffect(() => {
     const update = () => setSidePos(pickPos())
     window.addEventListener('theme:applied', update as EventListener)
     return () => window.removeEventListener('theme:applied', update as EventListener)
   }, [])
 
-  // Tabbed mode: wheel navigates tabs (no page scroll)
-  /*const onWheel = useCallback(
-    (e: WheelEvent) => {
-      if (behavior !== 'tabbed') return
-      e.preventDefault()
-      const threshold = 8
-      if (Math.abs(e.deltaY) < threshold) return
-      const dir = e.deltaY > 0 ? 1 : -1
-      const idx = TAB_ORDER.indexOf(activeId)
-      const nextIdx = Math.min(TAB_ORDER.length - 1, Math.max(0, idx + dir))
-      if (nextIdx !== idx) setActiveId(TAB_ORDER[nextIdx])
-    },
-    [behavior, activeId]
-  )
-
-  useEffect(() => {
-    if (behavior !== 'tabbed') return
-    window.addEventListener('wheel', onWheel, { passive: false })
-    return () => window.removeEventListener('wheel', onWheel as any)
-  }, [behavior, onWheel])*/
 
   const effectiveLayout =
           behavior === 'scroll' && layout === 'leftRail' ? 'centered' : layout
@@ -173,6 +194,8 @@ const about =
     <main id="top" className="flex flex-col min-h-screen" suppressHydrationWarning>
       {/* Smooth scrolling only in scroll mode */}
       {behavior === 'scroll' && <LenisProvider active />}
+
+      {behavior === 'scroll' && <ContinuousArt active />}
 
       {behavior === 'tabbed' && (
         <Nav

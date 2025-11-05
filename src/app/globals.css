@@ -110,3 +110,125 @@
     linear-gradient(to right,  color-mix(in oklab, var(--color-base) 80%, transparent) 1px, transparent 1px);
   background-size: 28px 28px;
 }
+
+
+.trail {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: clamp(140px, 12vw, 220px);  /* ✅ responsive width */
+  pointer-events: none;
+  z-index: var(--trail-z, 20);       /* easy to bump if needed */
+  overflow: hidden;
+  background: transparent;
+  contain: layout paint;
+}
+.trail--left { left: 0; }
+.trail--right { right: 0; }
+
+.trail__dot {
+  position: absolute;
+  top: -40px;
+  border-radius: 9999px;
+  /* animation longhands are set inline by the component */
+}
+
+@keyframes floatY {
+  0%   { transform: translateY(-40px); }
+  100% { transform: translateY(calc(100vh + 80px)); }
+}
+
+/* === TECH GRID: accent lines, darker edges, softer center === */
+.grid-debug {
+  --grid-gap: 28px;
+  --grid-line-strength: 38%; /* raise for stronger lines */
+  --grid-line-thickness: 1.2px;
+
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+
+  /* accent-colored grid lines */
+  background:
+    repeating-linear-gradient(
+      to right,
+      color-mix(in srgb, var(--color-accent) var(--grid-line-strength), transparent)
+        0 var(--grid-line-thickness),
+      transparent var(--grid-line-thickness) var(--grid-gap)
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--color-accent) var(--grid-line-strength), transparent)
+        0 var(--grid-line-thickness),
+      transparent var(--grid-line-thickness) var(--grid-gap)
+    );
+
+  /* darker edges, soft center — via radial mask */
+  mask-image: radial-gradient(
+    90% 60% at 50% 50%,
+    rgba(0, 0, 0, 0.4) 0%,   /* center — lighter mask = lines fade */
+    rgba(0, 0, 0, 1) 80%     /* edges — full strength */
+  );
+  -webkit-mask-image: radial-gradient(
+    90% 60% at 50% 50%,
+    rgba(0, 0, 0, 0.4) 0%,
+    rgba(0, 0, 0, 1) 80%
+  );
+}
+
+
+/* ==== FADE PANELS (robust, accent-aware with safe fallback) ==== */
+
+/* Base: obvious, always-visible neutral fade (fallback) */
+.fadepanel {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: clamp(160px, 12vw, 260px);
+  pointer-events: none;
+  z-index: var(--panel-z, 60); /* bump if something covers it */
+}
+.fadepanel-left {
+  left: 0;
+  /* neutral inward fade so it looks like a "panel" not a solid bar */
+  background: linear-gradient(
+    to right,
+    rgba(0,0,0,0.18) 0%,
+    rgba(0,0,0,0.10) 45%,
+    rgba(0,0,0,0.05) 70%,
+    transparent 100%
+  );
+}
+.fadepanel-right {
+  right: 0;
+  background: linear-gradient(
+    to left,
+    rgba(0,0,0,0.18) 0%,
+    rgba(0,0,0,0.10) 45%,
+    rgba(0,0,0,0.05) 70%,
+    transparent 100%
+  );
+}
+
+/* If color-mix is supported, tint the fades with the current accent(s) */
+@supports (background: color-mix(in srgb, white 50%, transparent)) {
+  .fadepanel-left {
+    background: linear-gradient(
+      to right,
+      color-mix(in srgb, var(--color-accent) 22%, transparent) 0%,
+      color-mix(in srgb, var(--color-accent) 14%, transparent) 45%,
+      color-mix(in srgb, var(--color-accent)  7%, transparent) 70%,
+      transparent 100%
+    );
+  }
+  .fadepanel-right {
+    background: linear-gradient(
+      to left,
+      color-mix(in srgb, var(--color-accent-2, var(--color-accent)) 22%, transparent) 0%,
+      color-mix(in srgb, var(--color-accent-2, var(--color-accent)) 14%, transparent) 45%,
+      color-mix(in srgb, var(--color-accent-2, var(--color-accent))  7%, transparent) 70%,
+      transparent 100%
+    );
+  }
+}

@@ -282,6 +282,7 @@ const about =
                     title={p.title}
                     blurb={p.blurb}
                     tags={p.tags}
+                    href={p.href}
                   />
                 ))}
               </div>

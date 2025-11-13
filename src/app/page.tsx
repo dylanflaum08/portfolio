@@ -131,14 +131,20 @@ const about =
     {
       title: 'Slothful Trading',
       blurb: 'Experimental trading toolkit with dashboards and automation playground.',
-      tags: ['TypeScript', 'WebSockets', 'Alpaca'],
-      href: 'https://github.com/dylanflaum08',
+      tags: ['TypeScript', 'CrewAI', 'Alpaca'],
+      href: 'https://github.com/dylanflaum08/slothful-trading',
     },
     {
       title: 'Movie Predictor',
       blurb: 'ML model that predicts movie ratings; end-to-end data pipeline & inference UI.',
-      tags: ['Python', 'scikit-learn', 'FastAPI'],
-      href: 'https://github.com/dylanflaum08',
+      tags: ['Python', 'scikit-learn', 'Machine Learning'],
+      href: 'https://github.com/dylanflaum08/movie-predictor',
+    },
+    {
+      title: 'Chain Reaction',
+      blurb: 'Web game where players must write words that begin with the ending letter of the previous word',
+      tags: ['Typescript', 'PHP', 'CSS'],
+      href: 'https://www.cise.ufl.edu/~menghuahuang/chain_reaction/',
     },
   ],
   []
